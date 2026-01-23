@@ -6,17 +6,24 @@ import org.springframework.stereotype.Component;
 @Component
 public class Student {
 
-    private int id = 101;
-    private String name = "Rakesh";
-    private String gender = "Male";
-
+    private int id;
+    private String name;
+    private String gender;
     @Autowired
     private Certification certification;
 
-    public void displayDetails() {
-        System.out.println("Student ID: " + id);
-        System.out.println("Student Name: " + name);
-        System.out.println("Gender: " + gender);
-        System.out.println(certification);
+    public Student() {
+        this.id = 32026;
+        this.name = "Rakesh";
+        this.gender = "Male";
+    }
+
+    public void display() {
+    	System.out.println("ID: "+ id);
+    	System.out.println("Name: "+name);
+    	System.out.println("Gende: "+gender);
+    	System.out.println(certification);
+    	System.out.println();
+
     }
 }
