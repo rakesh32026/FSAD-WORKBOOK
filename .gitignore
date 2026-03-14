@@ -1,0 +1,9 @@
+# Eclipse / STS workspace
+.metadata/
+.project
+.classpath
+.settings/
+
+# Build output
+target/
+bin/
