@@ -13,9 +13,9 @@ public class Student {
     private Certification certification;
 
     public Student() {
-        this.id = 32026;
-        this.name = "Rakesh";
-        this.gender = "Male";
+        this.id = 32040;
+        this.name = "VIJJU";
+        this.gender = "Female";
     }
 
     public void display() {

@@ -1,6 +1,7 @@
 package com.klu.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,69 +18,75 @@ public class CourseController {
     @Autowired
     private CourseService service;
 
-    // CREATE
+    // Add Course
     @PostMapping
     public ResponseEntity<?> addCourse(@RequestBody Course course) {
-        if (course.getTitle() == null || course.getTitle().isEmpty()) {
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body("Course title cannot be empty");
-        }
 
-        Course saved = service.addCourse(course);
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(saved);
+        Course savedCourse = service.addCourse(course);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedCourse);
     }
 
-    // READ ALL
+    // Get All Courses
     @GetMapping
     public ResponseEntity<List<Course>> getAllCourses() {
-        return ResponseEntity.ok(service.getAllCourses());
+
+        List<Course> courses = service.getAllCourses();
+        return ResponseEntity.ok(courses);
     }
 
-    // READ BY ID
+    // Get Course By ID
     @GetMapping("/{id}")
-    public ResponseEntity<?> getCourseById(@PathVariable int id) {
-        Course course = service.getCourseById(id);
-        if (course == null) {
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
+    public ResponseEntity<?> getCourseById(@PathVariable Long id) {
+
+        Optional<Course> course = service.getCourseById(id);
+
+        if (course.isPresent()) {
+            return ResponseEntity.ok(course.get());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("Course not found");
         }
-        return ResponseEntity.ok(course);
     }
 
-    // UPDATE
+    // Update Course
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateCourse(@PathVariable int id,
-                                          @RequestBody Course course) {
+    public ResponseEntity<?> updateCourse(@PathVariable Long id, @RequestBody Course course) {
 
-        Course updated = service.updateCourse(id, course);
-        if (updated == null) {
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
+        try {
+            Course updatedCourse = service.updateCourse(id, course);
+            return ResponseEntity.ok(updatedCourse);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("Course not found for update");
         }
-        return ResponseEntity.ok(updated);
     }
 
-    // DELETE
+    // Delete Course
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteCourse(@PathVariable int id) {
+    public ResponseEntity<?> deleteCourse(@PathVariable Long id) {
 
-        boolean deleted = service.deleteCourse(id);
-        if (!deleted) {
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body("Course not found for deletion");
+        try {
+            service.deleteCourse(id);
+            return ResponseEntity.ok("Course deleted successfully");
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Course not found");
         }
-        return ResponseEntity.ok("Course deleted successfully");
     }
 
-    // SEARCH
+    // Search Course by Title
     @GetMapping("/search/{title}")
-    public ResponseEntity<List<Course>> searchByTitle(@PathVariable String title) {
-        return ResponseEntity.ok(service.searchByTitle(title));
+    public ResponseEntity<?> searchCourse(@PathVariable String title) {
+
+        List<Course> courses = service.searchByTitle(title);
+
+        if (courses.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("No courses found");
+        }
+
+        return ResponseEntity.ok(courses);
     }
 }
